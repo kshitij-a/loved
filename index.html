@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -802,32 +802,30 @@ function capitalize(str) {
 
 // Strong name validation — reject gibberish
 function isValidName(name) {
-    // Min 4 characters
-    if (name.length < 4) return false;
+    const n = name.replace(/\s+/g, ' ').trim();
+    // Total length must be at least 4
+    if (n.length < 4) return false;
     // Only letters and spaces allowed
-    if (!/^[a-zA-Z\s]+$/.test(name)) return false;
-    // Must have at least one vowel (no name exists without vowels)
-    if (!/[aeiouAEIOU]/.test(name)) return false;
-    // No single word that's all same letter (aaaa, bbbb)
-    const words = name.toLowerCase().split(/\s+/);
+    if (!/^[a-zA-Z\s]+$/.test(n)) return false;
+    // Must have at least one vowel
+    if (!/[aeiouAEIOU]/.test(n)) return false;
+    // Check each word
+    const words = n.toLowerCase().split(/\s+/);
     for (const w of words) {
-        if (w.length > 0 && w.split('').every(c => c === w[0])) return false;
+        // Each word min 2 chars
+        if (w.length < 2) return false;
+        // No word that's all same letter (aaaa, bbbb)
+        if (w.split('').every(c => c === w[0])) return false;
+        // Short words (2-3 chars) must have a vowel
+        if (w.length <= 3 && !/[aeiou]/i.test(w)) return false;
     }
-    // Each word must be at least 2 chars
-    for (const w of words) {
-        if (w.length > 0 && w.length < 2) return false;
-    }
-    // No more than 3 consonants in a row (catches "fnf", "gvb", "bskrt")
-    if (/[^aeiou\s]{4,}/i.test(name)) return false;
-    // No more than 3 vowels in a row (catches "aaeee", "oooia")
-    if (/[aeiou]{4,}/i.test(name)) return false;
-    // Must not be all same character repeated
-    const cleaned = name.replace(/\s/g, '').toLowerCase();
+    // No more than 3 consonants in a row
+    if (/[^aeiou\s]{4,}/i.test(n)) return false;
+    // No more than 3 vowels in a row
+    if (/[aeiou]{4,}/i.test(n)) return false;
+    // All same character repeated
+    const cleaned = n.replace(/\s/g, '').toLowerCase();
     if (cleaned.split('').every(c => c === cleaned[0])) return false;
-    // Reject very short words with no vowel
-    for (const w of words) {
-        if (w.length >= 2 && w.length <= 3 && !/[aeiou]/i.test(w)) return false;
-    }
     return true;
 }
 
@@ -1282,23 +1280,23 @@ function aC() {
 // ============================================
 function doShare() {
     sfxClick(); vibrate(20);
-    const url = location.href;
-    const msg = '💕 Try this Real Love Calculator and find your compatibility score! I got 95%! �\n' + url;
-
-    // Always copy URL to clipboard first
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(msg).catch(() => {});
-    }
-
+    var shareUrl = 'http://birthdaysuprise.me/loved/';
+    var shareText = 'Try this Real Love Calculator! I got 95%! ' + shareUrl;
+    var ta = document.createElement('textarea');
+    ta.value = shareText;
+    ta.style.cssText = 'position:fixed;opacity:0;left:-9999px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); } catch(err) {}
+    document.body.removeChild(ta);
     if (navigator.share) {
-        navigator.share({ title: '💕 Real Love Calculator', text: msg, url: url }).catch(() => {});
+        navigator.share({ title: 'Real Love Calculator', text: shareText, url: shareUrl }).catch(function(){});
     }
-
-    // Show "Copied!" feedback
-    const b = document.querySelector('.ab.sh');
-    const o = b.innerHTML;
-    b.innerHTML = '✅ Link Copied!';
-    setTimeout(() => b.innerHTML = o, 2500);
+    var btn = document.querySelector('.ab.sh');
+    var origHTML = btn.innerHTML;
+    btn.textContent = 'Link Copied!';
+    setTimeout(function(){ btn.innerHTML = origHTML; }, 2500);
 }
 
 function doReset() {
