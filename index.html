@@ -800,13 +800,10 @@ function capitalize(str) {
     return str.replace(/\b\w/g, c => c.toUpperCase());
 }
 
-// Validate name — must be 2+ chars, only letters/spaces, not all same char
+// Validate name — just needs 2+ chars with at least one letter
 function isValidName(name) {
     if (name.length < 2) return false;
-    if (!/^[a-zA-Z\s]+$/.test(name)) return false;
-    // Reject if all same letter (like "rr", "aaa", "bbb")
-    const cleaned = name.replace(/\s/g, '').toLowerCase();
-    if (cleaned.length > 0 && cleaned.split('').every(c => c === cleaned[0])) return false;
+    if (!/[a-zA-Z]/.test(name)) return false;
     return true;
 }
 
@@ -988,7 +985,6 @@ function go() {
         el.classList.add('inp-shake');
         sfxError(); vibrate(80);
         setTimeout(() => el.classList.remove('inp-shake'), 450);
-        if (uName && !isValidName(uName)) el.value = '';
         return;
     }
     if (!cName || !isValidName(cName)) {
@@ -996,7 +992,6 @@ function go() {
         el.classList.add('inp-shake');
         sfxError(); vibrate(80);
         setTimeout(() => el.classList.remove('inp-shake'), 450);
-        if (cName && !isValidName(cName)) el.value = '';
         return;
     }
 
@@ -1263,17 +1258,23 @@ function aC() {
 // ============================================
 function doShare() {
     sfxClick(); vibrate(20);
-    const msg = 'Hey! Try this Real Love Calculator and find your compatibility score! 💕';
-    if (navigator.share) {
-        navigator.share({ title: '💕 Real Love Calculator', text: msg, url: location.href }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(location.href).then(() => {
-            const b = document.querySelector('.ab.sh');
-            const o = b.innerHTML;
-            b.innerHTML = '✅ Link Copied!';
-            setTimeout(() => b.innerHTML = o, 2000);
-        }).catch(() => alert('Share this link:\n' + location.href));
+    const url = location.href;
+    const msg = '💕 Try this Real Love Calculator and find your compatibility score! I got 95%! �\n' + url;
+
+    // Always copy URL to clipboard first
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg).catch(() => {});
     }
+
+    if (navigator.share) {
+        navigator.share({ title: '💕 Real Love Calculator', text: msg, url: url }).catch(() => {});
+    }
+
+    // Show "Copied!" feedback
+    const b = document.querySelector('.ab.sh');
+    const o = b.innerHTML;
+    b.innerHTML = '✅ Link Copied!';
+    setTimeout(() => b.innerHTML = o, 2500);
 }
 
 function doReset() {
