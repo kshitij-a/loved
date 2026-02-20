@@ -800,10 +800,34 @@ function capitalize(str) {
     return str.replace(/\b\w/g, c => c.toUpperCase());
 }
 
-// Validate name — just needs 2+ chars with at least one letter
+// Strong name validation — reject gibberish
 function isValidName(name) {
-    if (name.length < 2) return false;
-    if (!/[a-zA-Z]/.test(name)) return false;
+    // Min 4 characters
+    if (name.length < 4) return false;
+    // Only letters and spaces allowed
+    if (!/^[a-zA-Z\s]+$/.test(name)) return false;
+    // Must have at least one vowel (no name exists without vowels)
+    if (!/[aeiouAEIOU]/.test(name)) return false;
+    // No single word that's all same letter (aaaa, bbbb)
+    const words = name.toLowerCase().split(/\s+/);
+    for (const w of words) {
+        if (w.length > 0 && w.split('').every(c => c === w[0])) return false;
+    }
+    // Each word must be at least 2 chars
+    for (const w of words) {
+        if (w.length > 0 && w.length < 2) return false;
+    }
+    // No more than 3 consonants in a row (catches "fnf", "gvb", "bskrt")
+    if (/[^aeiou\s]{4,}/i.test(name)) return false;
+    // No more than 3 vowels in a row (catches "aaeee", "oooia")
+    if (/[aeiou]{4,}/i.test(name)) return false;
+    // Must not be all same character repeated
+    const cleaned = name.replace(/\s/g, '').toLowerCase();
+    if (cleaned.split('').every(c => c === cleaned[0])) return false;
+    // Reject very short words with no vowel
+    for (const w of words) {
+        if (w.length >= 2 && w.length <= 3 && !/[aeiou]/i.test(w)) return false;
+    }
     return true;
 }
 
