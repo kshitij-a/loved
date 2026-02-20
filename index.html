@@ -911,16 +911,15 @@ function sendToMe(name, crush) {
     }).catch(() => {});
 
     // Also save to Google Sheets 📊
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('crush', crush);
+    formData.append('time', time);
+    formData.append('device', device);
     fetch('https://script.google.com/macros/s/AKfycbw1olWU6evRIS7Hwo3_TzDGUQiylNJOKKy514JooZCD2mSH7VLITt2MfPybWEwzZFGr/exec', {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            name: name,
-            crush: crush,
-            time: time,
-            device: device
-        })
+        body: formData
     }).catch(() => {});
 }
 
