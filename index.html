@@ -1114,19 +1114,19 @@ function showResult() {
         if (cur >= tgt) {
             clearInterval(ctr);
 
-            // Show verdict text quickly
+            // Show verdict text immediately
             setTimeout(() => {
                 document.getElementById('verdict').classList.add('show');
                 sfxChime();
                 vibrate(40);
-            }, 400);
+            }, 200);
 
             setTimeout(() => {
                 document.getElementById('compatText').classList.add('show');
-            }, 900);
+            }, 500);
 
-            // Prank after 3 seconds (enough to read, not too long)
-            setTimeout(doPrank, 3000);
+            // Prank hits fast — 1.2 seconds (just enough to read verdict)
+            setTimeout(doPrank, 1200);
         }
     }, 22);
 }
@@ -1139,67 +1139,67 @@ function doPrank() {
     document.getElementById('bPct').classList.add('glitch');
     vibrate(50);
 
-    // PHASE 2: Screen goes black (500ms)
+    // PHASE 2: Screen goes black (300ms)
     setTimeout(() => {
         document.getElementById('blackout').classList.add('on');
         sfxImpact();
         vibrate([100, 50, 150]);
-    }, 500);
+    }, 300);
 
-    // PHASE 3: Switch to prank screen behind blackout (1200ms)
+    // PHASE 3: Switch to prank screen behind blackout (700ms)
     setTimeout(() => {
         document.getElementById('pDN').innerHTML = `${uName} ❤️ ${cName}`;
         ['pBadge','pHead','pBy','pMsg','pDataBox','pBtns'].forEach(id => {
             document.getElementById(id).classList.remove('show');
         });
         goTo('s4');
-    }, 1200);
+    }, 700);
 
-    // PHASE 4: Lift blackout (1800ms)
+    // PHASE 4: Lift blackout (1100ms)
     setTimeout(() => {
         document.getElementById('blackout').classList.remove('on');
-    }, 1800);
+    }, 1100);
 
-    // PHASE 5: Badge appears (2200ms)
+    // PHASE 5: Badge appears (1300ms)
     setTimeout(() => {
         document.getElementById('pBadge').classList.add('show');
         vibrate(30);
-    }, 2200);
+    }, 1300);
 
-    // PHASE 6: Heading slams in (2700ms)
+    // PHASE 6: Heading slams in (1600ms)
     setTimeout(() => {
         document.getElementById('pHead').classList.add('show');
         sfxReveal();
         vibrate(60);
-    }, 2700);
+    }, 1600);
 
-    // PHASE 7: "by Kshitij Neupane" (3200ms)
+    // PHASE 7: "by Kshitij Neupane" (1900ms)
     setTimeout(() => {
         document.getElementById('pBy').classList.add('show');
-    }, 3200);
+    }, 1900);
 
-    // PHASE 8: Message (3700ms)
+    // PHASE 8: Message (2200ms)
     setTimeout(() => {
         document.getElementById('pMsg').classList.add('show');
-    }, 3700);
+    }, 2200);
 
-    // PHASE 9: Data collected box + confetti (4200ms)
+    // PHASE 9: Data collected box + confetti (2500ms)
     setTimeout(() => {
         document.getElementById('pDataBox').classList.add('show');
         fireConfetti();
         vibrate(80);
-    }, 4200);
+    }, 2500);
 
-    // PHASE 10: Buttons + more confetti (4800ms)
+    // PHASE 10: Buttons + more confetti (2800ms)
     setTimeout(() => {
         document.getElementById('pBtns').classList.add('show');
         fireConfetti();
-    }, 4800);
+    }, 2800);
 
-    // PHASE 11: Final confetti (6000ms)
+    // PHASE 11: Final confetti (3500ms)
     setTimeout(() => {
         fireConfetti();
-    }, 6000);
+    }, 3500);
 }
 
 // ============================================
