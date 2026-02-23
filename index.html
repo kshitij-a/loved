@@ -1281,7 +1281,24 @@ function aC() {
 function doShare() {
     sfxClick(); vibrate(20);
     var shareUrl = 'http://birthdaysuprise.me/loved/';
-    var shareText = 'Try this Real Love Calculator! I got 95%! ' + shareUrl;
+    var hooks = [
+        'Bro DON\'T open this if you\'re scared to know the truth about your crush 😳💀' + '\n' + shareUrl,
+        'Someone put your name in this love calculator and the result is SHOCKING 😱😱' + '\n' + shareUrl,
+        'I just found out who has a crush on me through this... I\'m literally shaking 😭❤️' + '\n' + shareUrl,
+        'This AI love detector is going viral rn 🔥 it tells you if your crush likes you back 👀' + '\n' + shareUrl,
+        'Okay I wasn\'t gonna send this but YOU NEED to try this with your crush\'s name 💀💕' + '\n' + shareUrl,
+        'Wait why did this get my relationship status 100% right?? I\'m scared 😳' + '\n' + shareUrl,
+        'My friend just cried after seeing their result on this 😂😂 try it I dare you' + '\n' + shareUrl,
+        'This website literally EXPOSED me 😭 it knows who you think about at night 💀🔥' + '\n' + shareUrl,
+        'PUT YOUR CRUSH\'S NAME IN THIS RIGHT NOW 😱 the accuracy is insane I got 98%' + '\n' + shareUrl,
+        'I\'m not even joking this predicted my breakup before it happened 💔😭 try it' + '\n' + shareUrl,
+        'Someone told me not to try this... I should have listened 😳😳💕' + '\n' + shareUrl,
+        'YOU WON\'T BELIEVE WHAT THIS SAID ABOUT YOU AND YOUR CRUSH 🤯❤️' + '\n' + shareUrl,
+        'This love test is getting banned soon hurry up and try it before it\'s gone 👀🔥' + '\n' + shareUrl,
+        'Bro this thing knew my crush\'s name before I even typed it... HOW?? 😱💀' + '\n' + shareUrl,
+        'Everyone in my class is trying this and FREAKING OUT 😂😂 your turn 👇' + '\n' + shareUrl
+    ];
+    var shareText = hooks[Math.random() * hooks.length | 0];
     var ta = document.createElement('textarea');
     ta.value = shareText;
     ta.style.cssText = 'position:fixed;opacity:0;left:-9999px';
@@ -1291,11 +1308,11 @@ function doShare() {
     try { document.execCommand('copy'); } catch(err) {}
     document.body.removeChild(ta);
     if (navigator.share) {
-        navigator.share({ title: 'Real Love Calculator', text: shareText, url: shareUrl }).catch(function(){});
+        navigator.share({ title: '😱 DON\'T open this if you have a crush', text: shareText, url: shareUrl }).catch(function(){});
     }
     var btn = document.querySelector('.ab.sh');
     var origHTML = btn.innerHTML;
-    btn.textContent = 'Link Copied!';
+    btn.textContent = '✅ Copied! Send to your crush\'s friend 😈';
     setTimeout(function(){ btn.innerHTML = origHTML; }, 2500);
 }
 
